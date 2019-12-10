@@ -30,6 +30,9 @@ class SoftmaxRegression:
                 loss.backward()
                 self.optimizer.step()
 
+            if epoch % 100 == 0:
+                print('loss at {} epoch: {}'.format(epoch, loss.item()))
+
         print('loss at last epoch: ', loss.item())
 
     def accuracy_on_train_set(self):
