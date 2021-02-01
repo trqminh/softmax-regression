@@ -4,6 +4,7 @@ import torch.optim as optim
 from torch.utils.data.dataloader import DataLoader
 import numpy as np
 import matplotlib.pyplot as plt
+from itertools import islice
 
 
 class SoftmaxRegression:
@@ -53,35 +54,33 @@ class SoftmaxRegression:
 
     @staticmethod
     def draw(w, b):
-        x = np.linspace(0, 10, 100)
+        x = np.linspace(-8, 5, 100)
         y = (w[0] * x + b) / -w[1]
 
         plt.plot(x, y)
 
     def visualize(self, load_from_trained_model=False):
         if load_from_trained_model:
-            self.model = torch.load(self.model_path, map_location=self.device)
-
-        params = self.model['0.weight']
-        print('hehre', params)
-        params = list(self.weights.parameters())
-        print(params)
-
-        weight = params[0]
-        bias = params[1]
-        print(weight)
-        print(bias)
-        exit(0)
-
-        # print((weight[0] - weight[1]).numpy())
-        # print((bias[0] - bias[1]).numpy())
+            self.model.load_state_dict(torch.load(self.model_path, map_location='cpu'))
 
         with torch.no_grad():
-            for i in range(0, weight.shape[0] - 1, 1):
-                for j in range(i + 1, weight.shape[0], 1):
-                    w = weight[i] - weight[j]
-                    b = bias[i] - bias[j]
-                    w = w.numpy()
-                    b = b.numpy()
-                    self.draw(w, b)
+            weights, biases = None, None
+            for i, p in enumerate(self.model.parameters()):
+                if i ==0:
+                    weights = p.cpu().numpy()
+                else:
+                    biases = p.cpu().numpy()
 
+            for i in range(len(weights)):
+                w = np.zeros(len(weights[i]))
+                b = 2*biases[i]
+                for j in range(len(weights[i])):
+                    w[j] = 2*weights[i][j]
+                    for k in range(len(weights)):
+                        if k != i:
+                            w[j] -= weights[k][j]
+                for kb in range(len(weights)):
+                    if kb != i:
+                        b -= biases[kb]
+
+                self.draw(w,b)
