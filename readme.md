@@ -5,3 +5,7 @@ The source code, in my view, is easy to read. You can change the mean values of 
 
 Here is the example of classifying 3 classes:
 ![](img/example.png)
+
+## References
+- [Softmax Regression](machinelearningcoban.com/2017/02/17/softmax/)
+- [Pytorch tutorials](https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html)
